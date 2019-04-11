@@ -12,6 +12,8 @@
     "react-redux": "^7.0.1",
     "react-scripts": "2.1.8",
     "redux": "^4.0.1",
+    "redux-observable": "^1.1.0",
+    "rxjs": "^6.4.0",
     "typescript": "3.4.3"
   },
   "scripts": {
@@ -30,6 +32,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@types/react-redux": "^7.0.6"
+    "@types/react-redux": "^7.0.6",
+    "@types/rx": "^4.1.1"
   }
 }

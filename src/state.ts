@@ -1,21 +1,13 @@
-import { createStore, combineReducers } from 'redux'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
+import { combineEpics, createEpicMiddleware } from 'redux-observable'
+import { pingEpic } from './epics';
 
-type Action = 
+export type Action = 
   | { type: 'INCREMENT' }
   | { type: 'DECREMENT' }
+  | { type: 'PING' }
+  | { type: 'PONG' }
 
-/**
- * This is a reducer, a pure function with (state, action) => state signature.
- * It describes how an action transforms the state into the next state.
- *
- * The shape of the state is up to you: it can be a primitive, an array, an object,
- * or even an Immutable.js data structure. The only important part is that you should
- * not mutate the state object, but return a new object if the state changes.
- *
- * In this example, we use a `switch` statement and strings, but you can use a helper that
- * follows a different convention (such as function maps) if it makes sense for your
- * project.
- */
 function counter(state = 0, action: Action) {
   switch (action.type) {
     case 'INCREMENT':
@@ -27,10 +19,34 @@ function counter(state = 0, action: Action) {
   }
 }
 
-// Create a Redux store holding the state of your app.
-// Its API is { subscribe, dispatch, getState }.
-const store = createStore(combineReducers({
-  counter,
-}))
+function pingPong(state = 'None', action: Action) {
+  switch (action.type) {
+    case 'PING':
+      return 'PING'
+    case 'PONG':
+      return 'PONG'
+    default:
+      return state
+  }
+}
+
+const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const epicMiddleware = createEpicMiddleware()
+const rootEpic = combineEpics(
+  pingEpic
+)
+
+const store = createStore(
+  combineReducers({
+    counter,
+    pingPong,
+  }),
+  composeEnhancers(
+    applyMiddleware(epicMiddleware)
+  )
+)
+
+epicMiddleware.run(rootEpic)
 
 export default store
