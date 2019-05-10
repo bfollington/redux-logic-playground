@@ -1,10 +1,18 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { combineEpics, createEpicMiddleware } from 'redux-observable'
-import { pingEpic } from './epics';
+import epics from './epics';
+
+export type ActionType = 
+  | 'INCREMENT'
+  | 'DECREMENT'
+  | 'PING'
+  | 'CONTINUE'
+  | 'PONG'
 
 export type Action = 
   | { type: 'INCREMENT' }
   | { type: 'DECREMENT' }
+  | { type: 'CONTINUE' }
   | { type: 'PING' }
   | { type: 'PONG' }
 
@@ -34,7 +42,7 @@ const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || c
 
 const epicMiddleware = createEpicMiddleware()
 const rootEpic = combineEpics(
-  pingEpic
+  epics
 )
 
 const store = createStore(
