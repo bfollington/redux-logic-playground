@@ -3,7 +3,7 @@ import { delay, filter, take } from 'rxjs/operators';
 import { Observable } from "rxjs";
 import { ActionBasis } from "redux-logic/definitions/action";
 
-function waitFor<T extends string>(a$: Observable<ActionBasis<T>>, actionType: string) {
+function nextAction<T extends string>(a$: Observable<ActionBasis<T>>, actionType: string) {
   return new Promise((resolve, reject) => {
     a$.pipe(
       filter(x => x.type === actionType),
@@ -17,7 +17,7 @@ function waitFor<T extends string>(a$: Observable<ActionBasis<T>>, actionType: s
 const pingPongLogic = createLogic({
   type: 'PING',
   async process({ action$ }, dispatch, _done) {
-    await waitFor(action$, 'CONTINUE')
+    await nextAction(action$, 'CONTINUE')
     await delay(1000)
     dispatch({ type: 'PONG '})
   }
