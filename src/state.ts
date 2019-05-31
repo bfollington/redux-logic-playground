@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
-import { combineEpics, createEpicMiddleware } from 'redux-observable'
-import epics from './epics';
+import { createLogicMiddleware } from 'redux-logic'
+import logic from './logic'
 
 export type ActionType = 
   | 'INCREMENT'
@@ -40,10 +40,7 @@ function pingPong(state = 'None', action: Action) {
 
 const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const epicMiddleware = createEpicMiddleware()
-const rootEpic = combineEpics(
-  epics
-)
+const logicMiddleware = createLogicMiddleware(logic)
 
 const store = createStore(
   combineReducers({
@@ -51,10 +48,8 @@ const store = createStore(
     pingPong,
   }),
   composeEnhancers(
-    applyMiddleware(epicMiddleware)
+    applyMiddleware(logicMiddleware)
   )
 )
-
-epicMiddleware.run(rootEpic)
 
 export default store
