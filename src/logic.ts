@@ -2,8 +2,9 @@ import { createLogic } from "redux-logic";
 import { delay, filter, take } from 'rxjs/operators';
 import { Observable } from "rxjs";
 import { ActionBasis } from "redux-logic/definitions/action";
+import { ActionType } from "./state";
 
-function nextAction<T extends string>(a$: Observable<ActionBasis<T>>, actionType: string) {
+function nextAction<T extends ActionType>(a$: Observable<ActionBasis<T>>, actionType: ActionType) {
   return new Promise((resolve, reject) => {
     a$.pipe(
       filter(x => x.type === actionType),
@@ -14,16 +15,8 @@ function nextAction<T extends string>(a$: Observable<ActionBasis<T>>, actionType
   })
 }
 
-const makeNextAction = <T extends string>(a$: Observable<ActionBasis<T>>) => (actionType: string) => {
-  return new Promise((resolve, reject) => {
-    a$.pipe(
-      filter(x => x.type === actionType),
-      take(1)
-    ).subscribe(
-      x => resolve(x)
-    )
-  })
-}
+const makeNextAction = <T extends ActionType>(a$: Observable<ActionBasis<T>>) => (actionType: ActionType) => nextAction(a$, actionType)
+  
 
 const pingPongLogic = createLogic({
   type: 'PING',
