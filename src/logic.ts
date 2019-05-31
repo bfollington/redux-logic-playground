@@ -14,10 +14,23 @@ function nextAction<T extends string>(a$: Observable<ActionBasis<T>>, actionType
   })
 }
 
+const makeNextAction = <T extends string>(a$: Observable<ActionBasis<T>>) => (actionType: string) => {
+  return new Promise((resolve, reject) => {
+    a$.pipe(
+      filter(x => x.type === actionType),
+      take(1)
+    ).subscribe(
+      x => resolve(x)
+    )
+  })
+}
+
 const pingPongLogic = createLogic({
   type: 'PING',
   async process({ action$ }, dispatch, _done) {
-    await nextAction(action$, 'CONTINUE')
+    const nextAction = makeNextAction(action$)
+
+    await nextAction('CONTINUE')
     await delay(1000)
     dispatch({ type: 'PONG '})
   }
